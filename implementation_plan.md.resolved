@@ -30,6 +30,40 @@ chat-bot/
 └── .gitignore               # Ensure .env and venv are ignored
 ```
 
+Phase 1: Environment & Dependencies Setup
+
+    [#] Step 1.1: Populate backend/requirements.txt with your core web and AI libraries.
+    [#] Step 1.2: Populate frontend/requirements.txt with your UI libraries.
+    [#] Step 1.3: Create and activate a Python virtual environment (venv), then install both requirements files.
+
+Phase 2: The Core AI Engine (backend/app/agent.py)
+
+    [#] Step 2.1: Initialize the official Google GenAI client inside agent.py.
+    [ ] Step 2.2: Write the asynchronous orchestration function (get_chat_response_stream) that formats raw conversational history into Gemini's native message structure and streams back token chunks.
+
+Phase 3: Data Contracts & State Structure (backend/app/schemas.py)
+
+    [ ] Step 3.1: Define the Pydantic data schemas for incoming client requests (ChatRequest) and individual message objects to ensure structural safety.
+
+Phase 4: Server Architecture & Routing (backend/app/main.py)
+
+    [ ] Step 4.1: Initialize your FastAPI application instance.
+    [ ] Step 4.2: Configure Cross-Origin Resource Sharing (CROS) middleware so your frontend server can securely talk to your backend server.
+    [ ] Step 4.3: Set up an in-memory session dictionary (sessions = {}) to act as your temporary chat history database.
+    [ ] Step 4.4: Write the POST endpoint /api/chat that intercepts the user's message, updates the history dictionary, triggers the streaming agent, and returns a real-time EventSource (Server-Sent Events) stream.
+
+Phase 5: The User Interface (frontend/app.py)
+
+    [ ] Step 5.1: Set up the Streamlit or Chainlit application page configuration.
+    [ ] Step 5.2: Initialize Streamlit’s st.session_state to render past conversation bubbles on the UI.
+    [ ] Step 5.3: Write the streaming client logic that posts a new message to the backend, captures the chunks via a streaming HTTP consumer, and updates the screen live.
+
+Phase 6: System Launch & Verification
+
+    [ ] Step 6.1: Spin up the Uvicorn backend server on localhost:8000.
+    [ ] Step 6.2: Spin up the frontend UI server on localhost:8501.
+    [ ] Step 6.3: Run an end-to-end multi-turn conversation test to confirm context retention.
+
 ---
 
 ### Backend Components
