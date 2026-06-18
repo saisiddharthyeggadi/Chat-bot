@@ -1,0 +1,76 @@
+# Gemini Chatbot Implementation Plan
+
+This plan outlines the architecture and steps to build a robust chatbot using the `google-genai` SDK, FastAPI for the backend, and Streamlit for the frontend.
+
+## User Review Required
+
+> [!IMPORTANT]
+> You will need a Google Gemini API Key. You can get one from [Google AI Studio](https://aistudio.google.com/).
+> We will store it in a `.env` file in the `backend/` directory.
+
+## Proposed Changes
+
+### Project Structure
+
+We will adopt a modular structure to separate concerns:
+
+```text
+chat-bot/
+├── backend/
+│   ├── app/
+│   │   ├── main.py          # FastAPI application & endpoints
+│   │   ├── agent.py         # Gemini AI logic (google-genai integration)
+│   │   ├── schemas.py       # Pydantic models (request/response)
+│   │   └── utils.py         # Helper functions for logging/formatting
+│   ├── .env                 # Gemini API Key (keep this private)
+│   └── requirements.txt     # Backend dependencies
+├── frontend/
+│   ├── app.py               # Streamlit UI
+│   └── requirements.txt     # Frontend dependencies
+└── .gitignore               # Ensure .env and venv are ignored
+```
+
+---
+
+### Backend Components
+
+#### [MODIFY] [agent.py](file:///c:/Users/TOMATO651/Desktop/important/work/chat-bot/backend/app/agent.py)
+Implement the `GeminiAgent` class using `google-genai`.
+- Initialize the client with API key.
+- Implement a method for sending messages and receiving responses.
+- Support for chat history (multi-turn conversations).
+
+#### [NEW] [schemas.py](file:///c:/Users/TOMATO651/Desktop/important/work/chat-bot/backend/app/schemas.py)
+Define `ChatRequest` and `ChatResponse` models.
+
+#### [MODIFY] [main.py](file:///c:/Users/TOMATO651/Desktop/important/work/chat-bot/backend/app/main.py)
+Add a POST `/chat` endpoint that:
+- Accepts a message and conversation ID.
+- Calls [agent.py](file:///c:/Users/TOMATO651/Desktop/important/work/chat-bot/backend/app/agent.py) to get a response.
+- Returns the AI's response.
+
+#### [MODIFY] [requirements.txt](file:///c:/Users/TOMATO651/Desktop/important/work/chat-bot/backend/requirements.txt)
+Add `google-genai`.
+
+---
+
+### Frontend Components
+
+#### [MODIFY] [app.py](file:///c:/Users/TOMATO651/Desktop/important/work/chat-bot/frontend/app.py)
+Build a sleek Streamlit interface:
+- Use `st.chat_message` for a modern look.
+- Maintain session state for history.
+- Connect to the FastAPI backend.
+
+## Verification Plan
+
+### Automated Tests
+- Run `pytest` if added (later stage).
+- Scripted API test: Use `curl` or a Python script to send a POST request to `/chat` and verify the JSON response.
+
+### Manual Verification
+1. Start the FastAPI server: `uvicorn app.main:app --reload`
+2. Start the Streamlit app: `streamlit run frontend/app.py`
+3. Send a message "Hello" and verify Gemini responds correctly.
+4. Test multi-turn behavior: Ask "What is my name?" and verify Gemini remembers if told previously.
+5. Check `.env` is properly loaded and not committed to git.

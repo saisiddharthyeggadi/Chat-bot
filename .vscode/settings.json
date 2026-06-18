@@ -1,0 +1,6 @@
+{
+    "python.defaultInterpreterPath": "C:\\Users\\TOMATO651\\Desktop\\important\\work\\chat-bot\\chat-bot\\Scripts\\python.exe",
+    "python.analysis.extraPaths": [
+        "C:\\Users\\TOMATO651\\Desktop\\important\\work\\chat-bot\\chat-bot\\Lib\\site-packages"
+    ]
+}
