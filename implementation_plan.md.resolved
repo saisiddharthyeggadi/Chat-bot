@@ -39,7 +39,7 @@ Phase 1: Environment & Dependencies Setup
 Phase 2: The Core AI Engine (backend/app/agent.py)
 
     [#] Step 2.1: Initialize the official Google GenAI client inside agent.py.
-    [ ] Step 2.2: Write the asynchronous orchestration function (get_chat_response_stream) that formats raw conversational history into Gemini's native message structure and streams back token chunks.
+    [#] Step 2.2: Write the asynchronous orchestration function (get_chat_response_stream) that formats raw conversational history into Gemini's native message structure and streams back token chunks.
 
 Phase 3: Data Contracts & State Structure (backend/app/schemas.py)
 

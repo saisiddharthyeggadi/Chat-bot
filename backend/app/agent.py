@@ -18,7 +18,8 @@ async def get_chat_response_stream(
     system_instruction: str = None,
 ) -> AsyncGenerator[str, None]:
     try:
-        # print("config not done")
+        print("In get_chat_response_stream")
+        
         config = genai.types.GenerateContentConfig(
             system_instruction=system_instruction,
             temperature=0.7,
