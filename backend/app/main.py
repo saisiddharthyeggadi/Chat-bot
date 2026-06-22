@@ -1,5 +1,6 @@
 from fastapi import FastAPI
 from fastapi.responses import StreamingResponse
+from fastapi.middleware.cors import CORSMiddleware
 from .agent import get_chat_response_stream
 from .schemas import ChatRequest
 from .storage import get_history, add_message
@@ -7,6 +8,17 @@ import uuid
 import random
 
 app = FastAPI()
+
+# Configure CORS
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # For testing, allow all origins. In production, specify the frontend URL.
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+    expose_headers=["X-User-Id", "X-Session-Id"]  # Expose custom headers
+)
+
 
 #@app.get("/")
 #@app.get("/get-chat")
