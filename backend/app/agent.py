@@ -3,6 +3,10 @@ from dotenv import load_dotenv
 from google import genai
 from typing import AsyncGenerator, List, Dict, Any
 
+#get_chat_response_stream
+#
+
+
 load_dotenv()
 api_key = os.getenv("GEMINI_API_KEY")
 if not api_key:
@@ -20,12 +24,13 @@ async def get_chat_response_stream(
     try:
         print("In get_chat_response_stream")
         
+        #equipped model with its tools
         config = genai.types.GenerateContentConfig(
             system_instruction=system_instruction,
             temperature=0.7,
         )
-        # print("config done")
         
+        #give work to the model
         response_stream = await client.aio.models.generate_content_stream(
             model=model.name,
             contents=history,

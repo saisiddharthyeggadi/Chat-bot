@@ -3,41 +3,56 @@ from fastapi.responses import StreamingResponse
 from .agent import get_chat_response_stream
 from .schemas import ChatRequest
 from .storage import get_history, add_message
+import uuid
+import random
 
 app = FastAPI()
+
+#@app.get("/")
+#@app.get("/get-chat")
+#   get_response
+#@app.post("/chat")
+#   chat_post
+#@app.get("/health")
 
 # root endpoint
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
-# test endpoint
-@app.get('/chat-bot-response')
-async def chat_reply():
-    history = [
-        {"role": "user", "parts": [{"text": "hello"}]}
-    ]
+# Method to get chat history
+@app.get("/get-chat")
+def get_response(user_id: str, session_id: str):
+    history = get_history(user_id, session_id)
+    return {
+        "user_id": user_id,
+        "session_id": session_id,
+        "history": history
+    }
 
-    return StreamingResponse(
-        get_chat_response_stream(history=history),
-        media_type="text/plain"
-    )
-
-#where do we get user_id and session_id from?
 # chat endpoint
 @app.post("/chat")
 async def chat_post(request: ChatRequest):
     print("In chat_post")
 
-    user_id = request.user_id 
-    session_id = request.session_id
+    if not request.user_id:
+        user_id = f"guest_{random.randint(1000, 9999)}"
+    else:
+        user_id = request.user_id
+        
+    if not request.session_id:
+        session_id = f"session_{uuid.uuid4()}"
+    else:
+        session_id = request.session_id
     
+    # to /backend/app/storage.py
     add_message(user_id, session_id, "user", request.message)
     
     history = get_history(user_id, session_id)
 
     async def response_wrapper():
         full_response = ""
+        #to /backend/app/agent.py
         async for chunk in get_chat_response_stream(
             history=history,
             system_instruction=request.system_instruction
@@ -46,12 +61,16 @@ async def chat_post(request: ChatRequest):
             yield chunk
         
         if full_response:
+            #while adding message add it as response
             add_message(user_id, session_id, "model", full_response)
 
-    return StreamingResponse(
+    response = StreamingResponse(
         response_wrapper(),
         media_type="text/plain"
     )
+    response.headers["X-User-Id"] = user_id
+    response.headers["X-Session-Id"] = session_id
+    return response
 
 # health check
 @app.get("/health")

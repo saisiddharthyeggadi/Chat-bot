@@ -9,7 +9,7 @@ class ChatContent(BaseModel):
     parts: List[ContentPart]
 
 class ChatRequest(BaseModel):
-    user_id: str
-    session_id: str
+    user_id: Optional[str] = None
+    session_id: Optional[str] = None
     message: str
     system_instruction: Optional[str] = None
