@@ -33,7 +33,7 @@ st.markdown("""
 st.title("🤖 Gemini AI Chatbot")
 st.markdown("---")
 
-# Session State Initialization
+#Initializing Session State 
 if "user_id" not in st.session_state:
     st.session_state.user_id = f"user_{uuid.uuid4().hex[:8]}"
 if "session_id" not in st.session_state:
@@ -41,7 +41,7 @@ if "session_id" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
-# Sidebar for controls
+#Sidebar
 with st.sidebar:
     st.header("Settings")
     system_instruction = st.text_area(
@@ -54,7 +54,7 @@ with st.sidebar:
         st.session_state.session_id = f"session_{uuid.uuid4().hex[:8]}"
         st.rerun()
 
-# Display chat history
+#Chat history
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])

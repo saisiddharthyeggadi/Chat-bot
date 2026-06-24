@@ -6,86 +6,96 @@ from .schemas import ChatRequest
 from .storage import get_history, add_message
 import uuid
 import random
+import time
+
 
 app = FastAPI()
 
-# Configure CORS
+# CORS configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # For testing, allow all origins. In production, specify the frontend URL.
+    allow_origins=[
+        "*"
+    ],  # For testing, allow all origins. In production, specify the frontend URL.
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
-    expose_headers=["X-User-Id", "X-Session-Id"]  # Expose custom headers
+    expose_headers=["X-User-Id", "X-Session-Id"],  # Expose custom headers
 )
 
 
-#@app.get("/")
-#@app.get("/get-chat")
+# @app.get("/")
+# @app.get("/get-chat")
 #   get_response
-#@app.post("/chat")
+# @app.post("/chat")
 #   chat_post
-#@app.get("/health")
+# @app.get("/health")
+
 
 # root endpoint
 @app.get("/")
 def read_root():
     return {"Hello": "World"}
 
+
 # Method to get chat history
 @app.get("/get-chat")
 def get_response(user_id: str, session_id: str):
     history = get_history(user_id, session_id)
-    return {
-        "user_id": user_id,
-        "session_id": session_id,
-        "history": history
-    }
+    return {"user_id": user_id, "session_id": session_id, "history": history}
+
 
 # chat endpoint
 @app.post("/chat")
 async def chat_post(request: ChatRequest):
     print("In chat_post")
+    start = time.time()
+    pre_chunk_time = start
 
     if not request.user_id:
         user_id = f"guest_{random.randint(1000, 9999)}"
     else:
         user_id = request.user_id
-        
+
     if not request.session_id:
         session_id = f"session_{uuid.uuid4()}"
     else:
         session_id = request.session_id
-    
+
     # to /backend/app/storage.py
     add_message(user_id, session_id, "user", request.message)
-    
+
     history = get_history(user_id, session_id)
 
     async def response_wrapper():
+        nonlocal pre_chunk_time
         full_response = ""
-        #to /backend/app/agent.py
+        first_chunk = True
+        # to /backend/app/agent.py
         async for chunk in get_chat_response_stream(
-            history=history,
-            system_instruction=request.system_instruction
+            history=history, system_instruction=request.system_instruction
         ):
             full_response += chunk
             yield chunk
-        
+            chunk_recieved = time.time()
+            # if first_chunk:
+            print(f"Time to first token: {chunk_recieved - pre_chunk_time:.3f}s")
+            #     first_chunk = False
+            # else:
+            #     print(f"Inter-chunk latency: {chunk_recieved - pre_chunk_time:.3f}s")
+            pre_chunk_time = chunk_recieved
+
         if full_response:
-            #while adding message add it as response
+            # while adding message add it as response
             add_message(user_id, session_id, "model", full_response)
 
-    response = StreamingResponse(
-        response_wrapper(),
-        media_type="text/plain"
-    )
+    response = StreamingResponse(response_wrapper(), media_type="text/plain")
     response.headers["X-User-Id"] = user_id
     response.headers["X-Session-Id"] = session_id
     return response
+
 
 # health check
 @app.get("/health")
 async def health_check():
     return {"status": "ok"}
-
