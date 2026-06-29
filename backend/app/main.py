@@ -49,8 +49,6 @@ def get_response(user_id: str, session_id: str):
 @app.post("/chat")
 async def chat_post(request: ChatRequest):
     print("In chat_post")
-    start = time.time()
-    pre_chunk_time = start
 
     if not request.user_id:
         user_id = f"guest_{random.randint(1000, 9999)}"
@@ -68,7 +66,6 @@ async def chat_post(request: ChatRequest):
     history = get_history(user_id, session_id)
 
     async def response_wrapper():
-        nonlocal pre_chunk_time
         full_response = ""
         first_chunk = True
         # to /backend/app/agent.py
@@ -77,16 +74,8 @@ async def chat_post(request: ChatRequest):
         ):
             full_response += chunk
             yield chunk
-            chunk_recieved = time.time()
-            # if first_chunk:
-            print(f"Time to first token: {chunk_recieved - pre_chunk_time:.3f}s")
-            #     first_chunk = False
-            # else:
-            #     print(f"Inter-chunk latency: {chunk_recieved - pre_chunk_time:.3f}s")
-            pre_chunk_time = chunk_recieved
 
         if full_response:
-            # while adding message add it as response
             add_message(user_id, session_id, "model", full_response)
 
     response = StreamingResponse(response_wrapper(), media_type="text/plain")
