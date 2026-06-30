@@ -1,32 +1,10 @@
 """
 CHATBOT LATENCY BENCHMARKING
 ===========================
-Why perform this test?
-----------------------
-When building a production chatbot using LLMs (like Gemini 2.5 Flash), user experience is heavily
-impacted by responsiveness. Instead of waiting for the full response to generate (which can take several seconds),
-we stream the response chunk-by-chunk. 
-
-We benchmark the following key latency metrics to evaluate the chatbot performance:
-
 1. Time to First Token (TTFT):
-   - Definition: The duration from when the user submits a message to when the first character/token is shown.
-   - Importance: This is the single most critical metric for user engagement. Humans perceive latency after ~200ms. 
-     A TTFT under 1 second feels instant. If TTFT exceeds 3 seconds, users may drop off or assume the chatbot is broken.
-
 2. Total Latency:
-   - Definition: The total duration from submission to completion of the full response stream.
-   - Importance: Measures the overall time consumed. Important for understanding how long longer responses will take
-     and is used for estimating system limits.
-
-3. Time Per Output Token (TPOT):
-   - Definition: The average time taken to generate each subsequent token of text during the streaming phase.
-   - Importance: Determines reading comfort. If TPOT is less than 50ms per token (~20 tokens/sec), the stream
-     generates faster than a human can read, resulting in a smooth reading flow. 
-
+3. Time Per Output Token (TPOT):less than 50ms per token the stream generates faster than a human can read
 4. Throughput (Tokens per Second):
-   - Definition: The total estimated tokens generated divided by the total latency.
-   - Importance: Measures LLM generation density and resource efficiency.
 """
 
 import time
@@ -34,7 +12,7 @@ import requests
 import json
 from typing import Dict, Any
 
-#this test file is completely written by Gemini 3.5 flash
+
 BACKEND_URL = "http://localhost:8000"
 
 def run_latency_benchmark(prompt: str, user_id: str = "benchmark_user", session_id: str = "benchmark_session") -> Dict[str, Any]:
@@ -133,3 +111,6 @@ if __name__ == "__main__":
     # Test prompt
     prompt = "Explain in 3 detailed paragraphs how caching works in web applications."
     run_latency_benchmark(prompt)
+
+
+#most of this test code was  written by Gemini 3.5 flash

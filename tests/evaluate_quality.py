@@ -31,7 +31,6 @@ import uuid
 import re
 from typing import Dict, Any, List
 
-#this test file is completely written by Gemini 3.5 flash
 
 BACKEND_URL = "http://localhost:8000"
 EVAL_FILE = os.path.join(os.path.dirname(__file__), "eval_messages.json")
@@ -179,3 +178,5 @@ def run_evaluation() -> bool:
 
 if __name__ == "__main__":
     run_evaluation()
+
+#most of this test code was  written by Gemini 3.5 flash

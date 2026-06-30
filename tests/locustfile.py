@@ -1,25 +1,10 @@
 """
 CHATBOT LOAD TESTING WITH LOCUST
 ================================
-Why perform this test?
-----------------------
-Load testing evaluates the chatbot's stability, response latency, and error rates when subjected to 
-realistic multi-user environments. Unlike single-user benchmarks, concurrent load tests help you identify:
 
 1. Server Concurrency & Bottlenecks:
-   - Goal: Find out how many concurrent chat streams the uvicorn backend and the Gemini API can handle.
-   - Importance: Fast APIs can slow down or crash completely when multiple users connect. If connection pools
-     or database handles exhaust under load, requests fail.
-
 2. Concurrent TTFT Degradation:
-   - Goal: Map how Time to First Token (TTFT) scales as active users increase.
-   - Importance: When LLM token generation queues are overloaded, TTFT starts growing exponentially. Keeping
-     track of TTFT under load ensures that our user experience holds up during traffic spikes.
-
 3. Outages, Rate Limits, and Refusals (eg. HTTP 429):
-   - Goal: Catch API rate limit limits from Gemini or third-party gateways.
-   - Importance: Load testing triggers rate limits, letting us check if our retry backoffs (in `agent.py`) 
-     work correctly under realistic pressure, and helps determine our scale-up triggers.
 """
 
 import time
@@ -93,3 +78,5 @@ class ChatUser(HttpUser):
                 
             except Exception as e:
                 response.failure(f"Streaming error occurred: {str(e)}")
+
+#most of this test code was  written by Gemini 3.5 flash
