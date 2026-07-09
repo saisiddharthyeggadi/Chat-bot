@@ -70,7 +70,10 @@ async def chat_post(request: ChatRequest):
         first_chunk = True
         # to /backend/app/agent.py
         async for chunk in get_chat_response_stream(
-            history=history, system_instruction=request.system_instruction
+            history=history, 
+            system_instruction=request.system_instruction,
+            provider=request.provider,
+            model_name=request.model_name
         ):
             full_response += chunk
             yield chunk

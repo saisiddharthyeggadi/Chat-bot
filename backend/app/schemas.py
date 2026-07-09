@@ -13,3 +13,5 @@ class ChatRequest(BaseModel):
     session_id: Optional[str] = None
     message: str
     system_instruction: Optional[str] = None
+    provider: Optional[str] = None
+    model_name: Optional[str] = None
